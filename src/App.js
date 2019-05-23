@@ -16,22 +16,23 @@ class App extends Component {
     super()
     this.state = {
       events: [],
-      newEvents: [],
       data: [],
     }
   }
 
   componentDidMount = () => {
     const socket = socketIOClient('localhost:4000')
-    socket.on('new-message', event => {
+    socket.on('new-message', events => {
       this.setState({
-        events: [...this.state.events, { text: event.text, createdAt: event.created_at }],
-        newEvents: [...this.state.newEvents, event]
+        events
       })
     })
-    setInterval(() => {
-      this.setState({ data: [...this.state.data, { time: moment().format('HH:mm:ss DD-MM-YYYY'), count: this.state.newEvents.length }], newEvents: [] })
-    }, 60000)
+    socket.on('new-data', data => {
+      console.log('new data')
+      this.setState({
+        data
+      })
+    })
   }
 
   render() {
